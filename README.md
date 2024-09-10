@@ -3,11 +3,6 @@
 This is the PyTorch code for the paper "MaskVD: Region Masking for Efficient Video Object Detection".
 
 
-## Dependencies
-
-To s
-
-```
 
 ## Running Scripts
 
@@ -33,10 +28,7 @@ Scripts assume that the current working directory is on the Python path. In the 
 ```
 export PYTHONPATH="$PYTHONPATH:."
 ```
-Or in the Fish shell:
-```
-set -ax PYTHONPATH .
-```
+
 
 ## Acknowledgement
 
