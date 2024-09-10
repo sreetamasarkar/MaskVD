@@ -24,7 +24,7 @@ import copy
 from util.lr_sched import LR_Scheduler
 from torchprofile import profile_macs
 import numpy as np
-from utils.image import pad_to_size
+from utils.image import pad_to_size, rescale
 
 
 def collate_fn(batch):
@@ -78,12 +78,17 @@ def topkmask(feature, sparsity=0.5):
     # return (feature > min_value) + 0
     return idx
 
-def get_region_mask_static(region_size=16, region_sparsity=0.5):
+def get_region_mask_static(short_edge_length, max_size, region_size=16, region_sparsity=0.5):
     with open('heatmap_vid.npy', 'rb') as f:
         heat_map = np.load(f)
     heatmap = torch.tensor(heat_map/heat_map.max(), dtype=torch.float)
-    heatmap = F.interpolate(heatmap.unsqueeze(0).unsqueeze(0), (370, 672), mode='bilinear')
-    heatmap = pad_to_size(heatmap, (672, 672))
+
+    short_edge = min(heatmap.shape[-2:])
+    long_edge = max(heatmap.shape[-2:])
+    scale = min(short_edge_length / short_edge, max_size / long_edge)
+    heatmap = rescale(heatmap.unsqueeze(0).unsqueeze(0), scale)
+    # heatmap = F.interpolate(heatmap.unsqueeze(0).unsqueeze(0), (370, 672), mode='bilinear')
+    heatmap = pad_to_size(heatmap, (max_size, max_size))
     weight = torch.ones(1, 1, region_size, region_size)
     y = F.conv2d(heatmap, weight, stride=region_size)
     index = topkmask(y, sparsity=region_sparsity)
@@ -104,6 +109,8 @@ def val_pass(device, model, data, config, output_file):
     n_items = config.get("n_items", len(data))
     count = 0
 
+    img_shape = config["model"]["input_shape"][-2:]    
+
     # Latency calculation
     starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
     # --------------- GPU Warmup for correct latency calculation ---------------
@@ -116,9 +123,13 @@ def val_pass(device, model, data, config, output_file):
             results, _ = model(frame.to(device))
     model.clear_counts()
     # -------------------------------------------------------------------------
-    mask_index_static = get_region_mask_static(region_sparsity=1 - config["sparsity"]) # sparsity is keep rate 
+    short_edge_length = vid_item.dataset.combined_transform.short_edge_length
+    max_size = vid_item.dataset.combined_transform.max_size
+    mask_index_static = get_region_mask_static(short_edge_length=short_edge_length,
+                                               max_size=max_size,
+                                               region_sparsity=1 - config["sparsity"]) # sparsity is keep rate 
 
-    for _, vid_item in tqdm(zip(range(n_items), data), total=n_items, ncols=0):
+    for _, vid_item in tqdm(zip(range(50), data), total=n_items, ncols=0):
         vid_item = DataLoader(vid_item, batch_size=1, collate_fn=collate_fn)
         step = 0
         n_frames += len(vid_item)
@@ -135,7 +146,7 @@ def val_pass(device, model, data, config, output_file):
                     sparsity = 0
                     window_index = None
                 else:
-                    mask_index, window_index, sparsity, n_tokens = get_region_mask_dynamic(results, (672,672), conf_threshold=config["conf"], region_size=16, margin=config["margin"])
+                    mask_index, window_index, sparsity, n_tokens = get_region_mask_dynamic(results, image_shape=img_shape, conf_threshold=config["conf"], region_size=16, margin=config["margin"])
                     # mask_index, sparsity, n_tokens = get_original_mask(annotations[0], (672,672), region_size=16)
                     # combine with static mask
                     if config["sparsity"] < 1.0:

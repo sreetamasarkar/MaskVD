@@ -14,7 +14,7 @@ conda env create -f environment.yml
 Scripts should be run from the repo's base directory using the respective configuration files present in `configs`.
 
 ```
-./scripts/evaluate/vitdet_vid_mask.py ./configs/evaluate/vitdet_vid/base_672_maskvd.yml
+python scripts/evaluate/vitdet_vid_mask.py base_672_maskvd
 ```
 
 

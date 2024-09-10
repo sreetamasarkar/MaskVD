@@ -43,7 +43,7 @@ def evaluate_vitdet_metrics(device, model, data, config, output_file):
             results = model(frame.to(device))
     # -------------------------------------------------------------------------
 
-    for _, vid_item in tqdm(zip(range(n_items), data), total=n_items, ncols=0):
+    for _, vid_item in tqdm(zip(range(50), data), total=n_items, ncols=0):
         vid_item = DataLoader(vid_item, batch_size=1, collate_fn=collate_fn)
         n_frames += len(vid_item)
         model.reset()
@@ -51,7 +51,7 @@ def evaluate_vitdet_metrics(device, model, data, config, output_file):
         for frame, annotations in vid_item:
             with torch.inference_mode():
                 starter.record()
-                results = model(frame.to(device))
+                results, _ = model(frame.to(device))
                 # outputs.extend(model(frame.to(device)))
                 ender.record()
                 torch.cuda.synchronize()
