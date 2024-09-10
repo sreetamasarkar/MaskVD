@@ -1,0 +1,24 @@
+_defaults:
+  - "configs/models/vitdet_b_vid.yml"
+sparsity: 0.3
+margin: 0
+period: 8
+conf: 0.5
+# _output: "results/train/vitdet_vid_baseline_lrsched_step/${_name}/"
+_output: "results/train/vitdet_vid_baseline/${_name}/"
+output_weights: "results/train/vitdet_vid_baseline_lrsched_lr1e-5/vitdet_b_vid_${_name}.pth"
+split: "vid_train"
+vanilla: false
+# weights: "results/train/vitdet_vid_baseline_lrsched_lr1e-5/base_672/weights_epoch_2.pth"
+weights: "weights/vitdet_b_vid.pth"
+optimizer: "AdamW"
+optimizer_kwargs:
+  lr: 1.0e-5
+  weight_decay: 0.1
+lr_scheduler_kwargs:
+  min_lr: 1.0e-7
+  warmup_epochs: 5
+accum_iter: 8
+epochs: 50
+mask: None
+evaluate: False

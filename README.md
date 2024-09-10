@@ -2,7 +2,12 @@
 
 This is the PyTorch code for the paper "MaskVD: Region Masking for Efficient Video Object Detection".
 
+## Environment Setup
 
+To create environment, run
+```
+conda env create -f environment.yml
+```
 
 ## Running Scripts
 
@@ -11,6 +16,7 @@ Scripts should be run from the repo's base directory using the respective config
 ```
 ./scripts/evaluate/vitdet_vid_mask.py ./configs/evaluate/vitdet_vid/base_672_maskvd.yml
 ```
+
 
 
 ## Data

@@ -1,0 +1,17 @@
+_defaults:
+  - "configs/models/vitdet_b_vid.yml"
+margin: 0
+period: 16
+conf: 0.5
+sparsity: 0.9 # 1 - keep rate
+keep_rate: 1.0 
+window_drop: False
+# _output: "results/train/vitdet_vid_swin_period_${period}_static_${sparsity}_margin_${margin}_windrop_${window_drop}/${_name}/"
+# _output: "results/train/vitdet_vid_static_${sparsity}/${_name}/"
+_output: "results/train/vitdet_vid_debug/${_name}/"
+output_weights: "results/train/vitdet_vid_combined_period_${period}_margin_${margin}_conf_${conf}/vitdet_b_vid_${_name}.pth"
+split: "vid_train"
+vanilla: false
+# weights: "results/train/vitdet_vid_baseline_lrsched_lr1e-5/base_672/weights_epoch_2.pth"
+weights: "weights/vitdet_b_vid.pth"
+evaluate: True

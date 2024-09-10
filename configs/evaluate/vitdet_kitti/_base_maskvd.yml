@@ -1,0 +1,16 @@
+_defaults:
+  - "configs/models/vitdet_b_vid.yml"
+sparsity: 0.9 # 1- keep rate
+margin: 0
+period: 8
+conf: 0.5
+# _output: "results/train/vitdet_kitti_vit_baseline_3classes_epochs_8/${_name}/"
+_output: "results/train/vitdet_kitti_vit_period_${period}_static_${sparsity}_kr_0.5/${_name}/"
+# output_weights: "results/train/vitdet_vid_baseline_lrsched_lr1e-5/vitdet_b_vid_${_name}.pth"
+split: "vid_train"
+vanilla: false
+# weights: "weights/vitdet_b_vid.pth"
+weights: "results/train/vitdet_kitti_baseline_3classes_epochs_8/base_672/weights_epoch_6.pth"
+# weights: "results/train/vitdet_vid_baseline_lrsched_lr1e-5/base_672/weights_epoch_2.pth"
+# weights: "results/train/vitdet_kitti_vit_baseline_3classes_epochs_8/base_672/weights_epoch_6.pth"
+nb_classes: 4
