@@ -22,6 +22,8 @@ dependencies:
       - av==10.0.*
       - omegaconf==2.3.*
       - opencv-python==4.7.*  # Required for Detectron visualizer
+      - timm
+      - torchprofile
 
       # This builds Detectron2 from source (requires gcc >= 5.4).
       # The specified commit hash corresponds to Detectron2 0.6.

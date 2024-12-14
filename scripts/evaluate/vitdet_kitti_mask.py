@@ -84,6 +84,8 @@ def val_pass(device, model, data, config, output_file):
     n_items = config.get("n_items", len(data))
     count = 0
 
+    img_shape = config["model"]["input_shape"][-2:]    
+
     vid_item = DataLoader(data, batch_size=1)
     n_frames += len(vid_item)
     model.reset()
@@ -110,7 +112,7 @@ def val_pass(device, model, data, config, output_file):
                 sparsity = 0
                 window_index = None
             else:
-                mask_index, window_index, sparsity, n_tokens = get_region_mask_dynamic(results, (672,672), conf_threshold=config["conf"], region_size=16, margin=config["margin"])
+                mask_index, window_index, sparsity, n_tokens = get_region_mask_dynamic(results, image_shape=img_shape, conf_threshold=config["conf"], region_size=16, margin=config["margin"])
                 # mask_index, sparsity, n_tokens = get_original_mask(annotations[0], (672,672), region_size=16)
                 # combine with static mask
                 if config["sparsity"] < 1.0:

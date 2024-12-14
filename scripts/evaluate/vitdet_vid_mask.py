@@ -129,7 +129,7 @@ def val_pass(device, model, data, config, output_file):
                                                max_size=max_size,
                                                region_sparsity=1 - config["sparsity"]) # sparsity is keep rate 
 
-    for _, vid_item in tqdm(zip(range(50), data), total=n_items, ncols=0):
+    for _, vid_item in tqdm(zip(range(n_items), data), total=n_items, ncols=0):
         vid_item = DataLoader(vid_item, batch_size=1, collate_fn=collate_fn)
         step = 0
         n_frames += len(vid_item)
